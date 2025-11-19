@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>AR Video - MindAR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- A-FRAME OBLIGATORIO -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+
+    <!-- MINDAR A-FRAME -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.0/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+      body, html { margin: 0; overflow: hidden; }
+    </style>
+  </head>
+
+  <body>
+    <a-scene
+      mindar-image="imageTargetSrc: cubo2.mind"
+      color-space="sRGB"
+      renderer="colorManagement: true"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: true"
+      embedded
+    >
+      <a-assets>
+        <video
+          id="video1"
+          src="Cubo Flexible.mp4"
+          preload="auto"
+          loop="true"
+          crossorigin="anonymous"
+        ></video>
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="false"></a-camera>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-video
+          src="#video1"
+          width="1"
+          height="0.6"
+          position="0 0 0"
+          rotation="0 0 0"
+        ></a-video>
+      </a-entity>
+    </a-scene>
+
+    <script>
+      // reproducir el video cuando se detecta el marcador
+      const video = document.querySelector("#video1");
+      document.querySelector("a-scene").addEventListener("targetFound", () => {
+        video.play();
+      });
+      document.querySelector("a-scene").addEventListener("targetLost", () => {
+        video.pause();
+      });
+    </script>
+  </body>
+</html>
