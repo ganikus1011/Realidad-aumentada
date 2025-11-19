@@ -1,17 +1,15 @@
-<!DOCTYPE html>
-<html>
 <head>
   <meta charset="utf-8" />
   <title>MindAR - Markers -> YouTube</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Cargar las librerías correctas (NO módulos) -->
+  <!-- SOLO ESTOS DOS: MindAR + THREE -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-three.prod.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 
   <style>
-    html, body { margin: 0; height: 100%; overflow: hidden; }
-    #ar-container { width:100%; height:100vh; background: #000; }
+    html, body { margin:0; height:100%; overflow:hidden; }
+    #ar-container { width:100%; height:100vh; background:#000; }
 
     .yt-button {
       display:none;
@@ -31,57 +29,3 @@
     }
   </style>
 </head>
-<body>
-  <div id="ar-container"></div>
-
-  <!-- Botón YouTube para el marcador 0 -->
-  <button id="btn-0" class="yt-button">Ver video</button>
-
-  <script>
-    // Enlace al video
-    const YT_LINKS = {
-      0: "https://www.youtube.com/watch?v=vZvCCF1Cpy0"
-    };
-
-    // Inicializar MindAR correctamente (SIN imports)
-    const mindarThree = new window.MINDAR.IMAGE.MindARThree({
-      container: document.querySelector("#ar-container"),
-      imageTargetSrc: "cubo2.mind"
-    });
-
-    const { renderer, scene, camera } = mindarThree;
-
-    // Crea un plano encima del marcador
-    function makePlane() {
-      const geometry = new THREE.PlaneGeometry(1, 0.6);
-      const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
-      return new THREE.Mesh(geometry, material);
-    }
-
-    // Crear anchor para el marcador 0
-    const anchor0 = mindarThree.addAnchor(0);
-    const mesh0 = makePlane();
-    anchor0.group.add(mesh0);
-
-    const btn0 = document.getElementById("btn-0");
-
-    // Mostrar/ocultar botón según detección
-    anchor0.onTargetFound = () => { btn0.style.display = "block"; };
-    anchor0.onTargetLost  = () => { btn0.style.display = "none"; };
-
-    // Abrir YouTube
-    btn0.addEventListener("click", () => {
-      window.open(YT_LINKS[0], "_blank");
-    });
-
-    // Iniciar
-    const start = async () => {
-      await mindarThree.start();
-      renderer.setAnimationLoop(() => {
-        renderer.render(scene, camera);
-      });
-    };
-    start();
-  </script>
-</body>
-</html>
