@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR con MindAR</title>
+
+  <!-- MindAR + A-Frame desde CDN (estas versiones funcionan en GitHub Pages) -->
+  <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.0/dist/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Cámara y sistema de AR -->
+  <a-scene
+      mindar-image="imageTargetSrc: cubo2.mind;"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+      embedded>
+
+    <!-- Cámara AR -->
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <!-- Target que activa el video -->
+    <a-entity mindar-image-target="targetIndex: 0">
+
+      <!-- Video como textura -->
+      <a-video
+        id="videoAR"
+        src="Cubo Flexible.mp4"
+        width="1"
+        height="0.6"
+        position="0 0 0"
+        autoplay="false"
+        loop="true"
+        playsinline="true"
+        webkit-playsinline="true"
+        crossorigin="anonymous">
+      </a-video>
+
+    </a-entity>
+
+  </a-scene>
+
+  <!-- Script para controlar reproducción al detectar el marcador -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const video = document.querySelector("#videoAR");
+
+      const target = document.querySelector("[mindar-image-target]");
+      
+      // Cuando se detecta el marcador → reproducir video
+      target.addEventListener("targetFound", () => {
+        video.play();
+      });
+
+      // Cuando se pierde el marcador → pausar el video
+      target.addEventListener("targetLost", () => {
+        video.pause();
+      });
+    });
+  </script>
+
+</body>
+</html>
