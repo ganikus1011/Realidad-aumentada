@@ -4,11 +4,15 @@
   <meta charset="utf-8" />
   <title>MindAR - Markers -> YouTube</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script type="module" src="https://cdn.jsdelivr.net/npm/mind-ar/dist/mindar-image-three.prod.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.136.0/build/three.min.js"></script>
+
+  <!-- Cargar las librerías correctas (NO módulos) -->
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-three.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
   <style>
-    html, body { margin:0; height:100%; overflow:hidden; }
-    #ar-container { width:100%; height:100vh; position:relative; background:#000; }
+    html, body { margin: 0; height: 100%; overflow: hidden; }
+    #ar-container { width:100%; height:100vh; background: #000; }
+
     .yt-button {
       display:none;
       position:absolute;
@@ -22,68 +26,62 @@
       font-weight:bold;
       z-index:9999;
       font-family:Arial, sans-serif;
+      border:none;
+      font-size:16px;
     }
   </style>
 </head>
 <body>
   <div id="ar-container"></div>
 
-  <!-- Botones YouTube para cada marcador -->
-  <button id="btn-0" class="yt-button">Ver video 1</button>
- 
-  <script type="module">
-    import { MindARThree } from "https://cdn.jsdelivr.net/npm/mind-ar/dist/mindar-image-three.prod.js";
+  <!-- Botón YouTube para el marcador 0 -->
+  <button id="btn-0" class="yt-button">Ver video</button>
 
-    // Cambia aquí los enlaces de YouTube por los tuyos:
+  <script>
+    // Enlace al video
     const YT_LINKS = {
       0: "https://www.youtube.com/watch?v=vZvCCF1Cpy0"
-          };
+    };
 
-    const mindarThree = new MindARThree({
+    // Inicializar MindAR correctamente (SIN imports)
+    const mindarThree = new window.MINDAR.IMAGE.MindARThree({
       container: document.querySelector("#ar-container"),
       imageTargetSrc: "cubo2.mind"
     });
 
     const { renderer, scene, camera } = mindarThree;
 
-    // Creamos una malla sencilla por marcador para que se vea algo
+    // Crea un plano encima del marcador
     function makePlane() {
       const geometry = new THREE.PlaneGeometry(1, 0.6);
-      const material = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.6, transparent: true });
-      const mesh = new THREE.Mesh(geometry, material);
-      return mesh;
+      const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+      return new THREE.Mesh(geometry, material);
     }
 
-    // Lista para anchors
-    const anchors = [];
-
-    // Suponemos que tienes al menos 2 targets (IDs 0 y 1). Para N targets repite el patrón.
+    // Crear anchor para el marcador 0
     const anchor0 = mindarThree.addAnchor(0);
     const mesh0 = makePlane();
-    mesh0.position.set(0,0,0);
     anchor0.group.add(mesh0);
-    anchors.push(anchor0);
 
-    // Botones DOM
     const btn0 = document.getElementById("btn-0");
-    
-    // Mostrar/ocultar botones cuando se detecta o se pierde el marcador
+
+    // Mostrar/ocultar botón según detección
     anchor0.onTargetFound = () => { btn0.style.display = "block"; };
     anchor0.onTargetLost  = () => { btn0.style.display = "none"; };
 
-    // Abrir YouTube al presionar
+    // Abrir YouTube
     btn0.addEventListener("click", () => {
       window.open(YT_LINKS[0], "_blank");
     });
-   
-    // Iniciar AR
+
+    // Iniciar
     const start = async () => {
       await mindarThree.start();
       renderer.setAnimationLoop(() => {
         renderer.render(scene, camera);
       });
     };
-
     start();
   </script>
 </body>
+</html>
